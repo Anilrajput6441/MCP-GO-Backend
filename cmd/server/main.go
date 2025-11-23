@@ -23,6 +23,9 @@ func main() {
 
     // Initialize router
     router := gin.Default()
+    
+    // Disable automatic trailing slash redirect to prevent CORS issues
+    router.RedirectTrailingSlash = false
 
     router.Use(middleware.CORS())
 

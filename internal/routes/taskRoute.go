@@ -14,7 +14,10 @@ func TaskRoutes(router *gin.Engine, db *mongo.Database) {
 	taskGroup := router.Group("/tasks")
 	taskGroup.Use(middleware.AuthMiddleware()) // <--- PROTECTED
 	{
+		// Handle both with and without trailing slash to avoid redirect issues
+		taskGroup.POST("", handlers.CreateTask(taskCol))
 		taskGroup.POST("/", handlers.CreateTask(taskCol))
+		taskGroup.GET("", handlers.GetTasks(taskCol))
 		taskGroup.GET("/", handlers.GetTasks(taskCol))
 		taskGroup.PUT("/:id", handlers.UpdateTask(taskCol))
 		taskGroup.DELETE("/:id", handlers.DeleteTask(taskCol))
