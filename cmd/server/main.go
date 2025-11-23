@@ -28,7 +28,7 @@ func main() {
 
 
 	router.GET("/health", func(c *gin.Context) {
-        c.JSON(200, gin.H{"message": "health is good fine"})
+        c.JSON(200, gin.H{"message": "health is good "})
     })
 
     // Register all routes
