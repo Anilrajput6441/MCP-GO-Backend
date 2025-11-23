@@ -37,7 +37,7 @@ func GetTasks(taskCol *mongo.Collection) gin.HandlerFunc {
 			c.JSON(400, gin.H{"error": err.Error()})
 			return
 		}
-
+		
 		c.JSON(200, result)
 	}
 }
