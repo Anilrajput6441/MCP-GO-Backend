@@ -70,7 +70,6 @@ func UpdateTask(taskCol *mongo.Collection) gin.HandlerFunc {
 			c.JSON(400, gin.H{"error": "invalid data"})
 			return
 		}
-
 		result, err := services.UpdateTask(c, taskCol, id, body.Title, body.Description, body.Status)
 		if err != nil {
 			c.JSON(400, gin.H{"error": err.Error()})

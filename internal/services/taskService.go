@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -60,27 +61,50 @@ func DeleteTask(c *gin.Context,taskCol *mongo.Collection,id string) error{
 }
 
 func UpdateTask(c *gin.Context, taskCol *mongo.Collection, id, title, description, status string) (string, error) {
+
 	userEmail := c.GetString("email")
-	objID, _ := primitive.ObjectIDFromHex(id)
 
-	filter := bson.M{"_id": objID, "user_email": userEmail}
-
-	update := bson.M{
-		"$set": bson.M{
-			"title":       title,
-			"description": description,
-			"status":      status,
-			"updated_at":  time.Now(),
-		},
-	}
-
-	_, err := taskCol.UpdateByID(c, filter, update)
+	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return "", err
 	}
 
+	filter := bson.M{"_id": objID, "user_email": userEmail}
+
+	updateFields := bson.M{}
+
+	if title != "" {
+		updateFields["title"] = title
+	}
+	if description != "" {
+		updateFields["description"] = description
+	}
+	if status != "" {
+		updateFields["status"] = status
+	}
+
+	if len(updateFields) == 0 {
+		return "", errors.New("no fields to update")
+	}
+
+	updateFields["updated_at"] = time.Now()
+
+	update := bson.M{
+		"$set": updateFields,//why set? because we are updating the fields which are not present rest reamins untouched
+	}
+
+	res, err := taskCol.UpdateOne(c, filter, update)
+	if err != nil {
+		return "", err
+	}
+
+	if res.MatchedCount == 0 {
+		return "", errors.New("task not found")
+	}
+
 	return "task updated", nil
 }
+
 
 
 
