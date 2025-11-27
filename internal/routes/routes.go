@@ -7,10 +7,11 @@ import (
 
 func RegisterRoutes(router *gin.Engine, db *mongo.Database) {
     // User Routes
+    UserRoutes(router, db)
     // Task Routes
 	TaskRoutes(router, db)
 
-  
+    // MCP Routes
     MCPRoutes(router, db)
 
 

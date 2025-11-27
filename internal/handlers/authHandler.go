@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/anilrajput6441/mcp_project/internal/services"
@@ -45,14 +46,22 @@ func LoginHandler(userCol *mongo.Collection) gin.HandlerFunc {
 			return
 		}
 
-		tokenRes, err := services.LoginUser(c,userCol,body.Email,body.Password)
+		tokenRes, user, err := services.LoginUser(c,userCol,body.Email,body.Password)
 		
 		if err != nil {
 			c.JSON(401, gin.H{"error": err.Error()})
 			return
 		}
 
-		c.JSON(200, tokenRes)
+		// Return response in the requested format
+		c.JSON(200, gin.H{
+			"access_token": tokenRes["access_token"],
+			"user": gin.H{
+				"name":  user.FullName,
+				"email": user.Email,
+				"role":  user.Role,
+			},
+		})
 	}
 }
 
@@ -61,6 +70,7 @@ func RefreshHandler(usersCol *mongo.Collection) gin.HandlerFunc {
 		var body struct {
 			RefreshToken string `json:"refresh_token"`
 		}
+		fmt.Println("body: ", body)
 
 		if err := c.ShouldBindJSON(&body); err != nil {
 			c.JSON(400, gin.H{"error": "invalid data"})

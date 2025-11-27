@@ -11,10 +11,10 @@ import (
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// OPTIONS requests are handled by CORS middleware, skip auth for them
-		if c.Request.Method == "OPTIONS" {
-			c.Next()
-			return
-		}
+        if c.Request.Method == "OPTIONS" {
+            c.Next()
+            return
+        }
 
 		authHeader := c.GetHeader("Authorization")
 
@@ -34,8 +34,25 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		// Extract user info and attach to request context
-		c.Set("email", claims["email"])
-		c.Set("role", claims["role"])
+		email, _ := claims["email"].(string)
+		role, _ := claims["role"].(string)
+		userID, _ := claims["_id"].(string)
+		
+		if email == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token: missing email"})
+			c.Abort()
+			return
+		}
+		
+		if userID == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token: missing user ID"})
+			c.Abort()
+			return
+		}
+
+		c.Set("email", email)
+		c.Set("userID", userID)
+		c.Set("role", role)
 
 		c.Next()
 	}

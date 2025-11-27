@@ -8,10 +8,11 @@ import (
 
 var jwtSecret = []byte("SUPERSECRET")
 
-func GenerateAccessToken(email, role string) (string, error) {
+func GenerateAccessToken(email, role, userID string) (string, error) {
 	claims := jwt.MapClaims{
 		"email": email,
 		"role":  role,
+		"_id":   userID,
 		"exp":   time.Now().Add(15 * time.Minute).Unix(),
 	}
 

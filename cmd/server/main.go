@@ -19,11 +19,9 @@ func main() {
     defer client.Disconnect(nil)
 
   
-
-
-    // Initialize router
+     // Initialize router
     router := gin.Default()
-    
+
     // Disable automatic trailing slash redirect to prevent CORS issues
     router.RedirectTrailingSlash = false
 

@@ -37,22 +37,22 @@ func RegisterUser(ctx context.Context, userCol *mongo.Collection, email,password
 
 }
 
-func LoginUser(ctx context.Context, userCol *mongo.Collection, email string, password string) (map[string]string, error){
+func LoginUser(ctx context.Context, userCol *mongo.Collection, email string, password string) (map[string]string, models.User, error){
 	
 	var user models.User
 	err := userCol.FindOne(ctx,bson.M{"email":email}).Decode(&user)
 
 	if err != nil {
-		return nil, errors.New("invalid credentials")
+		return nil, models.User{}, errors.New("invalid credentials")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
-		return nil, errors.New("invalid credentials")
+		return nil, models.User{}, errors.New("invalid credentials")
 	}
 
 	// generate tokens
-	access, _ := utils.GenerateAccessToken(user.Email, user.Role)
+	access, _ := utils.GenerateAccessToken(user.Email, user.Role, user.ID)
 	refresh, _ := utils.GenerateRefreshToken(user.Email)
 
 	res := map[string]string{
@@ -60,7 +60,7 @@ func LoginUser(ctx context.Context, userCol *mongo.Collection, email string, pas
 		"refresh_token": refresh,
 	}
 
-	return res, nil
+	return res, user, nil
 }
 
 
@@ -79,9 +79,37 @@ func RefreshAccessToken(ctx context.Context, usersCol *mongo.Collection, refresh
 	}
 
 	// generate new access token
-	access, _ := utils.GenerateAccessToken(user.Email, user.Role)
+	access, _ := utils.GenerateAccessToken(user.Email, user.Role, user.ID)
 
 	return map[string]string{
 		"access_token": access,
 	}, nil
+}
+
+
+
+func ChangePassword(ctx context.Context, userCol *mongo.Collection, email, oldPassword, newPassword string) error {
+	
+
+		if len(newPassword) < 6 {
+			return errors.New("password too short")
+		}
+		var user models.User
+		err := userCol.FindOne(ctx, bson.M{"email": email}).Decode(&user)
+		if err != nil {
+			return errors.New("user not found")
+		}
+		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(oldPassword))
+		if err != nil {
+			return errors.New("invalid old password")
+		}
+
+		hash, _ := bcrypt.GenerateFromPassword([]byte(newPassword), 14)
+
+		_, err = userCol.UpdateOne(ctx, bson.M{"email": email}, bson.M{"$set": bson.M{"password": string(hash)}})
+		if err != nil {
+			return errors.New("failed to update password")
+		}
+
+		return nil
 }
