@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+
 	"github.com/anilrajput6441/mcp_project/internal/services"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -93,6 +95,7 @@ func MCPDeleteTask(taskCol *mongo.Collection) gin.HandlerFunc {
 			c.JSON(400, gin.H{"error": "invalid input"})
 			return
 		}
+		fmt.Println("body.Id", body.Id)
 
 		res, err := services.DeleteTaskFromAI(c.Request.Context(), taskCol, email, body.Id)
 		if err != nil {
