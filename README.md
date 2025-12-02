@@ -2,7 +2,7 @@
 
 A robust RESTful API backend built with Go (Gin framework) and MongoDB for task management with user authentication and MCP (Model Context Protocol) integration for AI-powered task operations.
 
-## 🚀 Features
+##  Features
 
 - **User Authentication**: JWT-based authentication with registration, login, and token refresh
 - **Task Management**: Full CRUD operations for tasks with user-specific access
@@ -12,7 +12,7 @@ A robust RESTful API backend built with Go (Gin framework) and MongoDB for task 
 - **Security**: Password hashing, JWT tokens, and CORS middleware
 - **MongoDB**: NoSQL database for flexible data storage
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - **Language**: Go 1.24+
 - **Web Framework**: Gin
@@ -21,13 +21,13 @@ A robust RESTful API backend built with Go (Gin framework) and MongoDB for task 
 - **Password Hashing**: bcrypt (via golang.org/x/crypto)
 - **Environment Variables**: godotenv
 
-## 📋 Prerequisites
+##  Prerequisites
 
 - Go 1.24 or higher
 - MongoDB (local or cloud instance)
 - Git
 
-## 🔧 Installation & Setup
+##  Installation & Setup
 
 1. **Clone the repository**
    ```bash
@@ -60,7 +60,7 @@ A robust RESTful API backend built with Go (Gin framework) and MongoDB for task 
 
    The server will start on `http://localhost:8080`
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 MCP-GO-Backend/
@@ -100,7 +100,7 @@ MCP-GO-Backend/
 └── go.sum                      # Dependency checksums
 ```
 
-## 🔐 Authentication
+##  Authentication
 
 All protected routes require a JWT token in the Authorization header:
 
@@ -115,7 +115,7 @@ Authorization: Bearer <your-jwt-token>
 3. **Refresh**: Get a new access token using refresh token
 4. **Protected Routes**: Use access token for authenticated requests
 
-## 📡 API Endpoints
+##  API Endpoints
 
 ### Health Check
 
